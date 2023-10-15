@@ -39,14 +39,11 @@ ENV ROS_WS /opt/ros/$ROS_DISTRO/ros_ws
 RUN mkdir -p $ROS_WS/src
 WORKDIR $ROS_WS
 
-# Now clone our source (base + ieb branch) into the image
-RUN git clone https://github.com/joeuser846/spherorvr-ros2.git
-RUN vcs import < $ROS_WS/src/sphero/sphero_other.repos
+# Copy sphero directory from host into container workspace
+COPY sphero/ $ROS_WS/src/sphero/
+# RUN vcs import < $ROS_WS/src/sphero/sphero_other.repos
 RUN pip3 install --user sphero-sdk
 RUN rosdep update && rosdep install --from-paths src --ignore-src -r -y
-
-# Build ROS packages from source code
-RUN colcon config --extend /opt/ros/$ROS_DISTRO
 RUN colcon build
 
 # Tell container that UI output goes to host X11 server
