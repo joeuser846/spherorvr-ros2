@@ -20,6 +20,7 @@
 
 FROM ros:iron-ros-base-jammy
 USER root
+
 # Suppress all interactive prompts during build
 ENV DEBIAN_FRONTEND=noninteractive
 
