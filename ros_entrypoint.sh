@@ -1,3 +1,6 @@
 #!/bin/bash
 
-source $ROS_WS/devel/setup.bash
+source devel/setup.bash
+
+# Execute CMD parameter
+exec "$@"

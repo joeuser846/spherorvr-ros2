@@ -43,7 +43,7 @@ WORKDIR $ROS_WS
 # Copy sphero directory from host into container workspace
 COPY sphero/ $ROS_WS/src/sphero/
 # RUN vcs import < $ROS_WS/src/sphero/sphero_other.repos
-RUN pip3 install --user sphero-sdk
+RUN pip3 install sphero-sdk
 RUN rosdep update && rosdep install --from-paths src --ignore-src -r -y
 RUN colcon build
 
