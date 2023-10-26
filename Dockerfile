@@ -2,7 +2,7 @@
 
 #     docker run -d -p 5000:5000 --restart=always --name registry registry:2
 
-# Build image on Raspberry Pi and push to gram registry:
+# Build image and push to gram registry:
 
 #     docker build --file Dockerfile -t gram:5000/spherorvr-ros2:arm . --push
 
@@ -19,7 +19,7 @@
 #     docker exec -it remobot /bin/bash
 
 FROM ros:iron-ros-base-jammy
-USER root
+# USER root
 
 # Suppress all interactive prompts during build
 ENV DEBIAN_FRONTEND=noninteractive
