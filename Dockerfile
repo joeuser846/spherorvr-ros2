@@ -6,13 +6,15 @@
 
 #     docker build --file Dockerfile -t gram:5000/spherorvr-ros2:arm . --push
 
+#     docker build --file Dockerfile -t gram:5000/spherorvr-ros2:amd . --push
+
 # Build multi-platform image and push to local registry:
 
 #     docker buildx build --platform linux/amd64,linux/arm64 --file Dockerfile -t gram:5000/spherorvr-ros2:latest . --push
 
 # Bringup rvr:
 
-#     docker run -it --rm --network=host --privileged --name=rvr gram:5000/spherorvr-ros2:x86  
+#     docker run -it --rm --network=host --privileged --name=rvr gram:5000/spherorvr-ros2:amd  
 
 # Access bash prompt on running container:
 
