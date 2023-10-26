@@ -2,13 +2,13 @@
 
 #     docker run -d -p 5000:5000 --restart=always --name registry registry:2
 
-# Build arm64 image on Raspberry Pi and push to gram registry:
+# Build image on Raspberry Pi and push to gram registry:
 
-#     docker build --file Dockerfile -t gram:5000/spherorvr-ros2:latest . --push
+#     docker build --file Dockerfile -t gram:5000/spherorvr-ros2:arm . --push
 
-# Build arm64 image on x86 laptop and push to local registry:
+# Build image on laptop and push to local registry:
 
-#     docker buildx build --file Dockerfile --platform linux/arm64 -t gram:5000/spherorvr-ros2:latest . --push
+#     docker build --file Dockerfile -t gram:5000/spherorvr-ros2:amd . --push
 
 # Bringup rvr:
 
@@ -37,11 +37,11 @@ RUN apt update -y && \
       
 # Set location of our container's catkin workspace
 ENV ROS_WS /opt/ros/$ROS_DISTRO/ros_ws
-RUN mkdir -p $ROS_WS/src
+RUN mkdir -p $ROS_WS
 WORKDIR $ROS_WS
 
 # Copy sphero directory from host into container workspace
-COPY sphero/ $ROS_WS/src/sphero/
+COPY src/ $ROS_WS/
 # RUN vcs import < $ROS_WS/src/sphero/sphero_other.repos
 RUN pip3 install sphero-sdk
 RUN rosdep update && rosdep install --from-paths src --ignore-src -r -y
