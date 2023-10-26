@@ -6,13 +6,13 @@
 
 #     docker build --file Dockerfile -t gram:5000/spherorvr-ros2:arm . --push
 
-# Build image on laptop and push to local registry:
+# Build multi-platform image and push to local registry:
 
-#     docker build --file Dockerfile -t gram:5000/spherorvr-ros2:amd . --push
+#     docker buildx build --platform linux/amd64,linux/arm64 --file Dockerfile -t gram:5000/spherorvr-ros2:latest . --push
 
 # Bringup rvr:
 
-#     docker run -it --rm --network=host --privileged --name=rvr gram:5000/spherorvr-ros2:latest  
+#     docker run -it --rm --network=host --privileged --name=rvr gram:5000/spherorvr-ros2:x86  
 
 # Access bash prompt on running container:
 
@@ -24,8 +24,8 @@ USER root
 # Suppress all interactive prompts during build
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt update -y && \  
-    apt install -y \
+RUN sudo apt update -y && \  
+    sudo apt install -y \
     python3-vcstool \
     python3-pip \
     git \
@@ -41,8 +41,8 @@ RUN mkdir -p $ROS_WS
 WORKDIR $ROS_WS
 
 # Copy sphero directory from host into container workspace
-COPY src/ $ROS_WS/
-# RUN vcs import < $ROS_WS/src/sphero/sphero_other.repos
+COPY src/ $ROS_WS/src/
+# RUN vcs import < $ROS_WS/src/sphero_other.repos
 RUN pip3 install sphero-sdk
 RUN rosdep update && rosdep install --from-paths src --ignore-src -r -y
 RUN colcon build
@@ -52,6 +52,8 @@ RUN colcon build
 ENV DISPLAY=:0
 ENV ROS_MASTER_URI=http://localhost:11311/
 
-# When container starts execute our ros_entrypoint.sh script
-# COPY ros_entrypoint.sh $ROS_WS/
-# ENTRYPOINT [ "bash", "ros_entrypoint.sh" ]
+# COPY  ../ros_entrypoint.bash .
+# RUN chmod +x ./ros_entrypoint.bash
+# ENTRYPOINT ["./ros_entrypoint.bash"]
+# # Following executes at <exec "$@"> in entrypoint file
+# CMD ["/bin/bash"]

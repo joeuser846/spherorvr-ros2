@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source devel/setup.bash
+source install/setup.bash
 
 # Execute CMD parameter
 exec "$@"
