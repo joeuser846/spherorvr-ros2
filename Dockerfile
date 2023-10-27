@@ -50,8 +50,8 @@ RUN source /opt/ros/${ROS_DISTRO}/setup.bash && \
         --license Apache-2.0 \
         --node-name sphero_node \
         sphero
-COPY sphero/config ./sphero/config
-COPY sphero/sphero ./sphero/sphero
+COPY src/config ./sphero/config
+COPY src/sphero ./sphero/sphero
 WORKDIR ${ROS_WS}
 RUN pip3 install sphero-sdk && \
     rosdep update && \
