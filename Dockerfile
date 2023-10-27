@@ -52,7 +52,6 @@ RUN source /opt/ros/${ROS_DISTRO}/setup.bash && \
         sphero
 COPY sphero/config ./sphero/config
 COPY sphero/sphero ./sphero/sphero
-COPY sphero/sphero_other.repos ./sphero/sphero_other.repos
 WORKDIR ${ROS_WS}
 RUN pip3 install sphero-sdk && \
     rosdep update && \
