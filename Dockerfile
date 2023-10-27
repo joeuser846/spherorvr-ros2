@@ -63,5 +63,5 @@ ENV ROS_MASTER_URI=http://localhost:11311/
 COPY  ../ros_entrypoint.bash .
 RUN chmod +x ./ros_entrypoint.bash
 ENTRYPOINT ["./ros_entrypoint.bash"]
-# Following executes at <exec "$@"> in entrypoint file
+# Following runs when/if ros_entrypoint reaches <exec "$@">
 CMD ["/bin/bash"]
