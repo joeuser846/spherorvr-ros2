@@ -52,11 +52,21 @@ RUN source /opt/ros/${ROS_DISTRO}/setup.bash && \
         --license Apache-2.0 \
         --node-name sphero_node \
         sphero
-COPY src/config ./sphero/config
-COPY src/sphero ./sphero/sphero
+COPY sphero/config ./sphero/config
+COPY sphero/sphero ./sphero/sphero
+
+# Create sphero_sdk package and ingest modules from devhost
+RUN source /opt/ros/${ROS_DISTRO}/setup.bash && \
+    ros2 pkg create \
+        --build-type ament_python \
+        --license Apache-2.0 \
+        --node-name sphero_sdk_node \
+        sphero_sdk
+COPY sphero_sdk ./sphero_sdk
+
 WORKDIR ${ROS_WS}
-RUN pip3 install sphero-sdk && \
-    rosdep update && \
+#RUN pip3 install sphero-sdk
+RUN rosdep update && \
     rosdep install --from-paths src --ignore-src -r -y && \
     colcon build --symlink-install
 
