@@ -1,57 +1,64 @@
-# Start local registry:
+# Start registry on devhost:
 
 #     docker run -d -p 5000:5000 --restart=always --name registry registry:2
 
-# Build image and push to gram registry:
+# Build image and push to devhost registry:
 
 #     docker build --file Dockerfile -t gram:5000/spherorvr-ros2:arm . --push
 
 #     docker build --file Dockerfile -t gram:5000/spherorvr-ros2:amd . --push
 
-# Build multi-platform image and push to local registry:
+# Build multi-platform image and push to devhost registry:
 
 #     docker buildx build --platform linux/amd64,linux/arm64 --file Dockerfile -t gram:5000/spherorvr-ros2:latest . --push
 
-# Bringup rvr:
+# Bringup rvrbot:
 
-#     docker run -it --rm --network=host --privileged --name=rvr gram:5000/spherorvr-ros2:amd  
+#     docker run -it --rm --network=host --privileged --name=rvrbot gram:5000/spherorvr-ros2:arm  
+
+#     docker run -it --rm --network=host --privileged --name=rvrbot gram:5000/spherorvr-ros2:amd
 
 # Access bash prompt on running container:
 
-#     docker exec -it remobot /bin/bash
+#     docker exec -it rvrbot /bin/bash
 
 FROM ros:iron-ros-base-jammy
-# USER root
+# Use bash shell to enable source command
+SHELL ["/bin/bash", "-c"]
 
 # Suppress all interactive prompts during build
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Install tools required at build time
 RUN sudo apt update -y && \  
     sudo apt install -y \
     python3-vcstool \
     python3-pip \
     git \
-# Install tools for debugging comms at runtime
+# Install tools for debugging at runtime
     net-tools \
     iputils-ping \
     netcat \
     nano
       
-# Set location of our container's catkin workspace
-ENV ROS_WS /opt/ros/$ROS_DISTRO/ros_ws
-RUN mkdir -p $ROS_WS
-WORKDIR $ROS_WS
+# Build colcon workspace, create empty Sphero package, and ingest Sphero Python modules from devhost
+ENV ROS_WS=/opt/ros/${ROS_DISTRO}/ros2_ws
+WORKDIR ${ROS_WS}/src
+RUN source /opt/ros/${ROS_DISTRO}/setup.bash && \
+    ros2 pkg create \
+        --build-type ament_python \
+        --license Apache-2.0 \
+        --node-name sphero_node \
+        sphero
+COPY sphero/config ./sphero/config
+COPY sphero/sphero ./sphero/sphero
+COPY sphero/sphero_other.repos ./sphero/sphero_other.repos
+WORKDIR ${ROS_WS}
+RUN pip3 install sphero-sdk && \
+    rosdep update && \
+    rosdep install --from-paths src --ignore-src -r -y && \
+    colcon build --symlink-install
 
-# Copy sphero directory from host into container workspace
-COPY src/ $ROS_WS/src/
-# RUN vcs import < $ROS_WS/src/sphero_other.repos
-RUN pip3 install sphero-sdk
-RUN rosdep update && rosdep install --from-paths src --ignore-src -r -y
-RUN colcon build
-
-# Tell container that UI output goes to host X11 server
-# Note: Host must execute 'xhost +local:' command BEFORE rviz starts    
-ENV DISPLAY=:0
 ENV ROS_MASTER_URI=http://localhost:11311/
 
 COPY  ../ros_entrypoint.bash .
