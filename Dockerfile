@@ -23,9 +23,8 @@
 #     docker exec -it rvrbot /bin/bash
 
 FROM ros:iron-ros-base-jammy
-# Use bash shell to enable source command
+# source command rquires bash shell
 SHELL ["/bin/bash", "-c"]
-
 # Suppress all interactive prompts during build
 ENV DEBIAN_FRONTEND=noninteractive
 
