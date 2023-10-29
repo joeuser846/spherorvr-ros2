@@ -10,9 +10,9 @@
 
 #     docker build --file Dockerfile -t gram:5000/spherorvr-ros2:amd . --push
 
-# Build multi-platform image and push to devhost registry:
+# Build multi-platform image and push to devhost registry (fails at push due to insecure registry)
 
-#     docker buildx build --platform linux/amd64,linux/arm64 --file Dockerfile -t gram:5000/spherorvr-ros2:latest . --push
+#     docker buildx build --network host --platform linux/amd64,linux/arm64 --file Dockerfile -t gram:5000/spherorvr-ros2:latest . --push
 
 # Bringup rvrbot:
 
