@@ -43,7 +43,7 @@ class Sphero(Node):
         self.t_stop = threading.Event() # threading stuff
 
         #======== Define parameters =========#
-        self.declare_parameter("port", "/dev/ttyS0",
+        self.declare_parameter("port", "/dev/ttyAMA0",
                                     ParameterDescriptor(type=ParameterType.PARAMETER_STRING,
                                     description='UART port connected to Sphero'))
         self.declare_parameter("cmd_vel", "cmd_vel",
