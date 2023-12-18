@@ -51,8 +51,7 @@ RUN source /opt/ros/${ROS_DISTRO}/setup.bash && \
         --license Apache-2.0 \
         --node-name sphero_node \
         sphero
-COPY sphero/config ./sphero/config
-COPY sphero/sphero ./sphero/sphero
+COPY src/sphero_rvr_driver/ ./src/sphero_rvr_driver/
 
 # # Create sphero_sdk package and ingest modules from devhost
 # RUN source /opt/ros/${ROS_DISTRO}/setup.bash && \
@@ -64,7 +63,7 @@ COPY sphero/sphero ./sphero/sphero
 # COPY sphero_sdk ./sphero_sdk
 
 WORKDIR ${ROS_WS}
-RUN pip3 install sphero-sdk
+# RUN pip3 install sphero-sdk
 RUN rosdep update && \
     rosdep install --from-paths src --ignore-src -r -y && \
     colcon build --symlink-install
