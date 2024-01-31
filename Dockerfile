@@ -42,30 +42,28 @@ RUN sudo apt update -y && \
     netcat \
     nano
       
-# Build colcon workspace, create empty Sphero package, and ingest Sphero Python modules from devhost
-ENV ROS_WS=/opt/ros/${ROS_DISTRO}/ros2_ws
-WORKDIR ${ROS_WS}/src
+# Build colcon workspace, create empty Sphero package, and ingest modules from devhost
+ENV ROS_WS=/opt/ros/${ROS_DISTRO}/ros2_ws/src
+WORKDIR ${ROS_WS}
+
+COPY sphero_rvr/ ./sphero_rvr/
+
 RUN source /opt/ros/${ROS_DISTRO}/setup.bash && \
     ros2 pkg create \
         --build-type ament_python \
         --license Apache-2.0 \
         --node-name sphero_node \
         sphero
-COPY src/sphero_rvr_driver/ ./src/sphero_rvr_driver/
 
-# # Create sphero_sdk package and ingest modules from devhost
 # RUN source /opt/ros/${ROS_DISTRO}/setup.bash && \
 #     ros2 pkg create \
-#         --build-type ament_python \
+#         --build-type ament_cmake \
 #         --license Apache-2.0 \
-#         --node-name sphero_sdk_node \
-#         sphero_sdk
-# COPY sphero_sdk ./sphero_sdk
+#         ldlidar_stl_ros2
 
 WORKDIR ${ROS_WS}
-# RUN pip3 install sphero-sdk
 RUN rosdep update && \
-    rosdep install --from-paths src --ignore-src -r -y && \
+    rosdep install --from-paths . --ignore-src -r -y && \
     colcon build --symlink-install
 
 ENV ROS_MASTER_URI=http://localhost:11311/
